@@ -88,6 +88,14 @@
   </main>
 
   <script>
+    class CalcError extends Error {
+      constructor(msg) {
+        super(msg);
+        this.name = "CalcError";
+      }
+    }
+
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +103,101 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new CalcError("must be valid numbers");
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (err) {
+        console.error("error during calculation", err);
+        output.innerHTML = `Error: ${err.message}`;
+      } finally {
+        console.log("attemped to calculate");
+      }
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    //sample object
+    const data = { name: "Lab9", type: "Error handling", level:9 } 
+
+    //attach specific behavior to each button
+    errorBtns.forEach((btn) => {
+      const label = btn.innerText;
+
+      btn.addEventListener("click", () => {
+        switch (label) {
+          case "Console Log":
+            console.log("console.log demo", data);
+            break;
+          case "Console Error":
+            console.error("console.error demo");
+            break;
+          case "Console Count":
+            console.count("line hit count: ");
+            break;
+          case "Console Warn":
+            console.warn("warning warning");
+            break;
+          case "Console Assert":
+            console.assert(false, "Assertion failed!");
+            break;
+          case "Console Clear":
+            console.clear();
+            break;
+          case "Console Dir":
+            console.dir(document.body);
+            break;
+          case "Console dirxml":
+            console.dirxml(document.body);
+            break;
+          case "Console Group Start":
+            console.group("grouped:");
+            console.log("msg 1");
+            console.log("msg 2");
+            break;
+          case "Console Group End":
+            console.groupEnd();
+            break;
+          case "Console Table":
+            console.table([
+              {name: "Preity", level: 99},
+              {name: "Niki", level: 90},
+            ]);
+            break;
+          case "Start Timer":
+            console.time("timer");
+            break;
+          case "End Timer":
+            console.timeEnd("timer");
+            break;
+          case "Console Trace":
+            function one() {
+              two();
+            }
+            function two() {
+              three();
+            }
+            function three() {
+              console.trace("woah, where am i?");
+            }
+
+            one();
+            break;
+        }
+      });
+    });
+
+    window.onerror = function (msg, url, line, col, error) {
+      console.log("global err caught:",msg,"at",url, "line",line);
+    };
+
+
   </script>
 </body>
 
